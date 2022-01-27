@@ -1,0 +1,5 @@
+third_party/gfootball_engine/build
+build/
+gfootball.egg-info
+ray_results/
+dumps/

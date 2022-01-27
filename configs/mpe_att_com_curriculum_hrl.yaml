@@ -1,0 +1,65 @@
+exp_name: att_com_curriculum_hrl
+from_checkpoint: null
+seed: 42
+num_gpus: 0
+num_workers: 12
+num_envs_per_worker: 1
+num_eval_workers: 1
+eval_interval: 20
+eval_episodes: 5
+
+stop_timesteps: 60000000
+
+# target env configs
+env: mpe
+scenario: curriculum_simple_spread_po  # [curriculum_simple_spread_po, curriculum_push_ball_po]
+env_config:
+  num_agent_candidates: [ 2, 4, 8, 16 ]
+  num_observable_agents: 1
+  num_agents: 4
+  target_num_agents: 16
+  max_num_agents: 8
+  episode_length: 200
+context_size: 3
+context_type: discrete
+high_level_interval: 10
+
+# algorithm configs
+high_level_config:
+  gamma: 0.99
+  gae_lambda: 1.0
+  kl_coeff: 0.2
+  rollout_fragment_length: 20
+  train_batch_size: 2400
+  sgd_minibatch_size: 2400
+  num_sgd_iter: 30
+  lr: 0.0001
+  entropy_coeff: 0.0
+  clip_param: 0.3
+  vf_clip_param: 10.0
+  model_config:
+    encoder_hidden_layers: [256, 256]
+    num_heads: 8
+    head_dim: 64
+    decoder_hidden_layers: [256]
+
+low_level_config:
+  gamma: 0.99
+  gae_lambda: 1.0
+  kl_coeff: 0.2
+  rollout_fragment_length: 200
+  train_batch_size: 24000
+  sgd_minibatch_size: 24000
+  num_sgd_iter: 30
+  lr: 0.0001
+  entropy_coeff: 0.0
+  clip_param: 0.3
+  vf_clip_param: 10.0
+
+# curriculum configs
+teacher: mpe_contextual_bandit
+teacher_config:
+  num_agent_candidates: [ 2, 4, 8, 16 ]
+  num_contexts: 3
+  gamma: 0.3
+  update_interval: 20

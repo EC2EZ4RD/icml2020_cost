@@ -1,0 +1,41 @@
+FROM tensorflow/tensorflow:1.15.2-gpu-py3
+
+# CUDA includes
+ENV CUDA_PATH /usr/local/cuda
+ENV CUDA_INCLUDE_PATH /usr/local/cuda/include
+ENV CUDA_LIBRARY_PATH /usr/local/cuda/lib64
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Ubuntu Packages
+RUN apt-get update -y && apt-get install software-properties-common -y && \
+    add-apt-repository -y multiverse && apt-get update -y && apt-get upgrade -y && \
+    apt-get install -y apt-utils nano vim man build-essential wget sudo && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get --no-install-recommends install -yq git cmake build-essential \
+  libgl1-mesa-dev libsdl2-dev \
+  libsdl2-image-dev libsdl2-ttf-dev libsdl2-gfx-dev libboost-all-dev \
+  libdirectfb-dev libst-dev mesa-utils xvfb x11vnc \
+  libsdl-sge-dev python3 python3-pip
+
+# Install curl and other dependencies
+RUN apt-get update -y && apt-get install -y curl libssl-dev openssl libopenblas-dev \
+    libhdf5-dev hdf5-helpers hdf5-tools libhdf5-serial-dev libprotobuf-dev protobuf-compiler git
+# RUN curl -sk https://raw.githubusercontent.com/torch/distro/master/install-deps | bash
+RUN rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip install --upgrade pip setuptools psutil
+
+# Setup the football/mpe env
+COPY ./football /gfootball
+RUN chmod -R 777 /gfootball
+RUN cd /gfootball && python3 -m pip install .
+
+# Python packages we use (or used at one point...)
+COPY ./requirements.txt requirements.txt
+RUN python3 -m pip install -r /requirements.txt
+
+RUN pip3 install torch==1.9.1+cu111 torchvision==0.10.1+cu111 torchaudio==0.9.1 -f https://download.pytorch.org/whl/torch_stable.html
+
+WORKDIR /home/football

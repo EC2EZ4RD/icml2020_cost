@@ -1,0 +1,30 @@
+exp_name: shared_ppo
+from_checkpoint: null
+seed: 42
+num_gpus: 1
+num_workers: 120
+num_envs_per_worker: 5
+num_eval_workers: 2
+eval_interval: 5
+eval_episodes: 20
+
+stop_timesteps: 100000000
+
+# env configs
+env: football
+scenario: 5_vs_5
+num_agents: 4
+training_shaping_rewards: null
+
+# algorithm configs
+gamma: 0.99
+gae_lambda: 1.0
+kl_coeff: 0.2
+rollout_fragment_length: 1000
+train_batch_size: 100000
+sgd_minibatch_size: 10000
+num_sgd_iter: 30
+lr: 0.0001
+entropy_coeff: 0.0
+clip_param: 0.3
+vf_clip_param: 10.0

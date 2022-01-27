@@ -1,0 +1,29 @@
+exp_name: shared_ppo
+from_checkpoint: null
+seed: 123
+num_gpus: 1
+num_workers: 10
+num_envs_per_worker: 5
+num_eval_workers: 2
+eval_interval: 10
+eval_episodes: 10
+
+stop_timesteps: 60000000
+
+# env configs
+env: mpe
+scenario: curriculum_simple_spread_po
+env_config:
+  num_agents: 16
+  num_observable_agents: 1
+  episode_length: 25
+
+# algorithm configs
+gamma: 0.99
+gae_lambda: 1.0
+kl_coeff: 0.5
+num_sgd_iter: 10
+lr: 0.0001
+entropy_coeff: 0.0
+clip_param: 0.3
+vf_clip_param: 10.0

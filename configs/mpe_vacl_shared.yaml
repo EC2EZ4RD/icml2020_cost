@@ -1,0 +1,45 @@
+exp_name: shared_ppo_vacl
+from_checkpoint: null
+seed: 123
+num_gpus: 1
+num_workers: 10
+num_envs_per_worker: 5
+num_eval_workers: 2
+eval_interval: 10
+eval_episodes: 10
+
+stop_timesteps: 60000000
+
+# env configs
+env: mpe
+scenario: curriculum_simple_spread_po  # [curriculum_simple_spread_po, curriculum_push_ball_po]
+env_config:
+  num_agent_candidates: [2, 4, 8, 16]
+  num_observable_agents: 1
+  episode_length: 25
+
+# algorithm configs
+gamma: 0.99
+gae_lambda: 1.0
+kl_coeff: 0.5
+num_sgd_iter: 10
+lr: 0.0001
+entropy_coeff: 0.0
+clip_param: 0.3
+vf_clip_param: 10.0
+
+# curriculum configs
+teacher: vacl_mpe
+teacher_config:
+  # VACL
+  buffer_length: 2000
+  reproduction_num: 150
+  epsilon: 0.1  # uniform noise
+  delta: 0.1  # gradient step
+  h: 1.0  # h in the RBF kernel
+  Rmin: 0.5  # threshold for active tasks
+  Rmax: 0.95  # threshold for solved tasks
+  del_switch: novelty  # criteria to update buffer
+  topk: 5
+  num_initial_tasks: 1000
+  solved_prop: 0.05  # solved tasks added to avoid forgetting
